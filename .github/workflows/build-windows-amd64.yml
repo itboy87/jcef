@@ -32,7 +32,7 @@ jobs:
           choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System'
           echo "ANT_HOME=C:\ProgramData\chocolatey\lib\ant\apache-ant-1.10.14" | Out-File -Append -FilePath $env:GITHUB_ENV
           echo "JAVA_HOME=${env:JAVA_HOME}" | Out-File -Append -FilePath $env:GITHUB_ENV
-          echo "VS160COMNTOOLS=C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools" | Out-File -Append -FilePath $env:GITHUB_ENV
+          echo "VS160COMNTOOLS=C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\Tools" | Out-File -Append -FilePath $env:GITHUB_ENV
           echo "JCEF_CMAKE=C:\Program Files\CMake\bin" | Out-File -Append -FilePath $env:GITHUB_ENV
           echo "PYTHON_27_PATH=C:\Python27" | Out-File -Append -FilePath $env:GITHUB_ENV
       - name: Build JCEF
