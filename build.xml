@@ -118,6 +118,11 @@
     <mkdir dir="${out.path}"/>
     <echo message="${jcef.version}" file="${out.path}/com/jetbrains/cef/version.info" append="false"/>
     <jar destfile="${out.path}/jcef.jar" index="true" update="false" manifest="java/manifest/MANIFEST.MF">
+      <manifest>
+        <attribute name="Implementation-Title" value="JCEF"/>
+        <attribute name="Implementation-Version" value="1.0"/>
+        <attribute name="Implementation-Vendor" value="FLEEK SOFT"/>
+      </manifest>
       <fileset dir="${out.path}">
         <include name="org/cef/**"/>
         <include name="com/jetbrains/**"/>
@@ -125,6 +130,11 @@
       </fileset>
     </jar>
     <jar destfile="${out.path}/jcef-sources.jar" index="true" update="false">
+      <manifest>
+        <attribute name="Implementation-Title" value="JCEF-Sources"/>
+        <attribute name="Implementation-Version" value="1.0"/>
+        <attribute name="Implementation-Vendor" value="FLEEK SOFT"/>
+      </manifest>
       <fileset dir="java">
         <include name="org/cef/**"/>
         <include name="com/jetbrains/**"/>
@@ -135,6 +145,11 @@
   <target name="tests-jar" depends="compile.tests">
     <mkdir dir="${out.path}"/>
     <jar destfile="${out.path}/jcef-tests.jar" index="true" update="false">
+      <manifest>
+        <attribute name="Implementation-Title" value="JCEF-Tests"/>
+        <attribute name="Implementation-Version" value="1.0"/>
+        <attribute name="Implementation-Vendor" value="FLEEK SOFT"/>
+      </manifest>
       <fileset dir="${out.path}">
         <include name="tests/**"/>
         <include name="com/**"/>
