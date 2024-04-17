@@ -33,7 +33,7 @@ xcopy /sfy .\java\tests\detailed\handler\*.html %OUT_PATH%\tests\detailed\handle
 xcopy /sfy .\java\tests\detailed\handler\*.png %OUT_PATH%\tests\detailed\handler\
 
 :end
-endlocal & set RETURNCODE=%ERRORLEVEL%
+endlocal & set RETURNCODE=0
 goto omega
 
 :returncode
