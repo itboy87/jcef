@@ -39,7 +39,7 @@ jobs:
       - name: Build JCEF
         run: |
           cd .\jb\tools\windows
-          cygwin\bin\bash.exe -c "cmd /c build.bat all x86_64"
+          C:\tools\Cygwin\bin\bash.exe -c "cmd /c build.bat all x86_64"
       - name: Archive production artifacts
         uses: actions/upload-artifact@v3
         with:
