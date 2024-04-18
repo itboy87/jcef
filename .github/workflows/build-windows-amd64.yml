@@ -43,6 +43,6 @@ jobs:
       - name: Archive production artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: jcef_win_x86_64
-          path: jcef_win_x86_64.tar.gz
+          name: jcef_win_x64
+          path: jcef_win_x64.tar.gz
 
