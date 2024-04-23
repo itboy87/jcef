@@ -482,6 +482,7 @@ bool IsNSView(void* ptr) {
 }
 
 void* GetNSView(void* nsWindow) {
+  NSLog(@"GenNSView %ld", (long)nsWindow);
   if (![(id)nsWindow isKindOfClass:[NSWindow class]]) {
     NSLog(@"Expected NSWindow, found %@",
           NSStringFromClass([(id)nsWindow class]));
@@ -489,6 +490,16 @@ void* GetNSView(void* nsWindow) {
   }
 
   return [(NSWindow*)nsWindow contentView];
+}
+
+void retainObj(jlong pointer) {
+  if (pointer != 0)
+    [(NSObject*)pointer retain];
+}
+
+void releaseObj(jlong pointer) {
+  if (pointer != 0)
+    [(NSObject*)pointer release];
 }
 
 CefWindowHandle CreateBrowserContentView(NSWindow* window, CefRect& orig) {
