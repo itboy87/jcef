@@ -711,7 +711,7 @@ void CefPostTaskAndWait(CefThreadId threadId,
   std::shared_ptr<CriticalWait> waitCond = std::make_shared<CriticalWait>(lock.get());
   lock.get()->Lock();
   CefPostTask(threadId, base::BindOnce(_runTaskAndWakeup, waitCond, std::move(task)));
-  waitCond.get()->Wait(waitMillis);
+  waitCond.get()->Wait(static_cast<unsigned int>(waitMillis));
   lock.get()->Unlock();
 }
 
