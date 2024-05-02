@@ -482,7 +482,6 @@ bool IsNSView(void* ptr) {
 }
 
 void* GetNSView(void* nsWindow) {
-  NSLog(@"GenNSView %ld", (long)nsWindow);
   if (![(id)nsWindow isKindOfClass:[NSWindow class]]) {
     NSLog(@"Expected NSWindow, found %@",
           NSStringFromClass([(id)nsWindow class]));
