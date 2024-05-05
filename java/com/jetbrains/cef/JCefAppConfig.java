@@ -37,6 +37,10 @@ public abstract class JCefAppConfig {
         return cefSettings;
     }
 
+    public String getCefFrameworkPathOSX() {
+        return cefFrameworkPathOSX;
+    }
+
     public SystemBootstrap.Loader getLoader() {
         return loader;
     }
