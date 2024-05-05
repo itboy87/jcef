@@ -22,7 +22,7 @@ public abstract class JCefAppConfig {
     protected final CefSettings cefSettings = new CefSettings();
     protected final List<String> appArgs = new ArrayList<>();
     protected SystemBootstrap.Loader loader = null;
-    private String cefFrameworkPathOSC = null;
+    private String cefFrameworkPathOSX = null;
     private static final AtomicReference<Double> forceDeviceScaleFactor = new AtomicReference<>(Double.valueOf(0));
 
     public String[] getAppArgs() {
@@ -45,8 +45,8 @@ public abstract class JCefAppConfig {
         JCefAppConfig appConfig = new JCefAppConfig() {
         };
         if (OS.isMacintosh()) {
-            appConfig.cefFrameworkPathOSC = Utils.pathOf(nativeBundlePath, "Frameworks/Chromium Embedded Framework.framework");
-            appConfig.appArgs.add("--framework-dir-path=" + appConfig.cefFrameworkPathOSC);
+            appConfig.cefFrameworkPathOSX = Utils.pathOf(nativeBundlePath, "Frameworks/Chromium Embedded Framework.framework");
+            appConfig.appArgs.add("--framework-dir-path=" + appConfig.cefFrameworkPathOSX);
             appConfig.appArgs.add("--main-bundle-path=" + Utils.pathOf(nativeBundlePath, "Frameworks/jcef Helper.app"));
             appConfig.appArgs.add("--browser-subprocess-path=" + Utils.pathOf(nativeBundlePath, "Frameworks/jcef Helper.app/Contents/MacOS/jcef Helper"));
             appConfig.loader = new SystemBootstrap.Loader() {
