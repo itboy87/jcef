@@ -46,13 +46,19 @@ public abstract class JCefAppConfig {
     }
 
     public static JCefAppConfig getInstance(String nativeBundlePath) {
+        return getInstance(nativeBundlePath, false);
+    }
+
+    public static JCefAppConfig getInstance(String nativeBundlePath, boolean outOfProcess) {
         JCefAppConfig appConfig = new JCefAppConfig() {
         };
         if (OS.isMacintosh()) {
             appConfig.cefFrameworkPathOSX = Utils.pathOf(nativeBundlePath, "Frameworks/Chromium Embedded Framework.framework");
-            appConfig.appArgs.add("--framework-dir-path=" + appConfig.cefFrameworkPathOSX);
-            appConfig.appArgs.add("--main-bundle-path=" + Utils.pathOf(nativeBundlePath, "Frameworks/jcef Helper.app"));
-            appConfig.appArgs.add("--browser-subprocess-path=" + Utils.pathOf(nativeBundlePath, "Frameworks/jcef Helper.app/Contents/MacOS/jcef Helper"));
+            if (!outOfProcess) {
+                appConfig.appArgs.add("--framework-dir-path=" + appConfig.cefFrameworkPathOSX);
+                appConfig.appArgs.add("--main-bundle-path=" + Utils.pathOf(nativeBundlePath, "Frameworks/jcef Helper.app"));
+                appConfig.appArgs.add("--browser-subprocess-path=" + Utils.pathOf(nativeBundlePath, "Frameworks/jcef Helper.app/Contents/MacOS/jcef Helper"));
+            }
             appConfig.loader = new SystemBootstrap.Loader() {
                 @Override
                 public void loadLibrary(String libname) {
@@ -61,7 +67,9 @@ public abstract class JCefAppConfig {
                 }
             };
         } else if (OS.isLinux()) {
-            appConfig.cefSettings.browser_subprocess_path = Utils.pathOf(nativeBundlePath, "jcef_helper");
+            if (!outOfProcess) {
+                appConfig.cefSettings.browser_subprocess_path = Utils.pathOf(nativeBundlePath, "jcef_helper");
+            }
             appConfig.cefSettings.resources_dir_path = Utils.pathOf(nativeBundlePath);
             appConfig.cefSettings.locales_dir_path = Utils.pathOf(nativeBundlePath, "locales");
             appConfig.loader = new SystemBootstrap.Loader() {
@@ -72,7 +80,9 @@ public abstract class JCefAppConfig {
                 }
             };
         } else if (OS.isWindows()) {
-            appConfig.cefSettings.browser_subprocess_path = Utils.pathOf(nativeBundlePath, "jcef_helper.exe");
+            if (!outOfProcess) {
+                appConfig.cefSettings.browser_subprocess_path = Utils.pathOf(nativeBundlePath, "jcef_helper.exe");
+            }
             appConfig.cefSettings.resources_dir_path = Utils.pathOf(nativeBundlePath);
             appConfig.cefSettings.locales_dir_path = Utils.pathOf(nativeBundlePath, "locales");
 
