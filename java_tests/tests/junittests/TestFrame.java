@@ -43,7 +43,7 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.*;
 
 // Base class for browsers that run tests.
-class TestFrame extends JFrame implements CefLifeSpanHandler, CefLoadHandler, CefRequestHandler,
+public class TestFrame extends JFrame implements CefLifeSpanHandler, CefLoadHandler, CefRequestHandler,
                                           CefResourceRequestHandler {
     private static final long serialVersionUID = -5570653778104813836L;
     private static final int TIMEOUT = 5;
@@ -62,7 +62,7 @@ class TestFrame extends JFrame implements CefLifeSpanHandler, CefLoadHandler, Ce
     protected CefBrowser browser_ = null;
     private CountDownLatch disposeLatch_;
 
-    TestFrame() {
+    public  TestFrame() {
         disposeLatch_ = new CountDownLatch(1);
         client_ = CefApp.getInstance().createClient();
         assertNotNull(client_);

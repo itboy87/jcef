@@ -24,7 +24,7 @@ cd "$OUT_DIR" || exit 1
 cmake -G "Xcode" -DPROJECT_ARCH="$TARGET_ARCH" ..
 
 echo "*** run xcodebuild..."
-xcodebuild -configuration ${CEF_BUILD_TYPE}
+xcodebuild -configuration ${CEF_BUILD_TYPE} CODE_SIGNING_ALLOWED=NO, CODE_SIGNING_REQUIRED=NO
 
 echo "*** change @rpath in libjcef.dylib..."
 cd "$OUT_DIR"/native/${CEF_BUILD_TYPE} || exit 1

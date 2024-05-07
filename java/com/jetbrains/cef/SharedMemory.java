@@ -1,5 +1,6 @@
 package com.jetbrains.cef;
 
+import org.cef.SystemBootstrap;
 import org.cef.misc.CefLog;
 import org.cef.misc.Utils;
 
@@ -13,7 +14,6 @@ public class SharedMemory {
 
     final private long mySegment;
     final private long myPtr;
-    private volatile boolean myClosed = false;
 
     final private long myMutex;
 
@@ -24,7 +24,7 @@ public class SharedMemory {
     public static void loadDynamicLib() {
         try {
             if (ALT_MEM_HELPER_PATH == null || ALT_MEM_HELPER_PATH.isEmpty())
-                System.loadLibrary("shared_mem_helper");
+                SystemBootstrap.loadLibrary("shared_mem_helper");
             else
                 System.load(ALT_MEM_HELPER_PATH.trim());
         } catch (UnsatisfiedLinkError e) {
@@ -53,15 +53,14 @@ public class SharedMemory {
         return myPtr;
     }
 
-    public boolean isClosed() { return myClosed; }
-
-    synchronized
-    public void close() {
-        if (myClosed)
-            return;
-        myClosed = true;
-        closeSharedSegment(mySegment);
-        closeSharedMutex(myMutex);
+    @Override
+    protected void finalize() throws Throwable {
+        try {
+            closeSharedSegment(mySegment);
+            closeSharedMutex(myMutex);
+        } finally {
+            super.finalize();
+        }
     }
 
     public ByteBuffer wrap(int size) {
