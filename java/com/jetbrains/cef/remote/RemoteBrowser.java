@@ -8,6 +8,7 @@ import org.cef.browser.CefBrowser;
 import org.cef.browser.CefDevToolsClient;
 import org.cef.browser.CefFrame;
 import org.cef.browser.CefRequestContext;
+import org.cef.callback.CefDragData;
 import org.cef.callback.CefPdfPrintCallback;
 import org.cef.callback.CefRunFileDialogCallback;
 import org.cef.callback.CefStringVisitor;
@@ -45,7 +46,7 @@ public class RemoteBrowser implements CefBrowser {
     private CefNativeRenderHandler myRender;
 
     private final AtomicBoolean myIsNativeBrowserCreationRequested = new AtomicBoolean(false);
-    private volatile Boolean myIsNativeBrowserCreationStarted = false;
+    private final AtomicBoolean myIsNativeBrowserCreationStarted = new AtomicBoolean(false);
     private volatile boolean myIsNativeBrowserCreated = false;
     private volatile boolean myIsClosing = false;
     private volatile boolean myIsClosed = false;
@@ -66,7 +67,7 @@ public class RemoteBrowser implements CefBrowser {
     public int getCid() { return myOwner.getCid(); }
     public RemoteClient getOwner() { return myOwner; }
 
-    public boolean isNativeBrowserCreationStarted() { return myIsNativeBrowserCreationStarted; }
+    public boolean isNativeBrowserCreationStarted() { return myIsNativeBrowserCreationStarted.get(); }
     public boolean isNativeBrowserCreated() { return myIsNativeBrowserCreated; }
     public int getNativeBrowserIdentifier() { return myNativeBrowserIdentifier; }
 
@@ -107,7 +108,7 @@ public class RemoteBrowser implements CefBrowser {
             if (myIsClosing)
                 return;
 
-            myIsNativeBrowserCreationStarted = true;
+            myIsNativeBrowserCreationStarted.set(true);
             final int hmask = myOwner.getHandlersMask() | (myRender == null ? 0 :
                     RemoteClient.HandlerMasks.NativeRender.val());
             myService.exec((s) -> {
