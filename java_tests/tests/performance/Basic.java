@@ -23,6 +23,7 @@ public class Basic {
     public static void main(String[] args) {
         final long timeStartNs = System.nanoTime();
         TestSetupExtension.initializeCef();
+        final boolean isRemote = CefApp.isRemoteEnabled();
 
         CountDownLatch appInitializationLatch = new CountDownLatch(1);
         CefApp.getInstance().onInitialization(state -> {
@@ -30,7 +31,7 @@ public class Basic {
                 final long spentCefAppInitializationMs = (System.nanoTime() - timeStartNs)/1000000l;
                 appInitializationLatch.countDown();
                 CefLog.Info("CefApp successfully initialized, spent %d ms", spentCefAppInitializationMs);
-                _sendStatisticValue("timeCefAppInitializationMs", spentCefAppInitializationMs);
+                _sendStatisticValue(isRemote ? "timeCefAppInitializationRemoteMs" : "timeCefAppInitializationMs", spentCefAppInitializationMs);
             }
         });
 
@@ -47,7 +48,7 @@ public class Basic {
                 final long spentBrowserCreationMs = (System.nanoTime() - timeAfterInitNs)/1000000l;
                 onAfterCreated_.countDown();
                 CefLog.Info("Native browser creation spent %d ms", spentBrowserCreationMs);
-                _sendStatisticValue("timeOnAfterCreatedMs", spentBrowserCreationMs);
+                _sendStatisticValue(isRemote ? "timeOnAfterCreatedRemoteMs" : "timeOnAfterCreatedMs", spentBrowserCreationMs);
             }
         });
         CountDownLatch onLoadStartLatch = new CountDownLatch(1);
@@ -59,14 +60,14 @@ public class Basic {
                 final long spentUntilLoadStartedMs = (System.nanoTime() - timeAfterInitNs)/1000000l;
                 onLoadStartLatch.countDown();
                 CefLog.Info("Until onLoadStart spent %d ms", spentUntilLoadStartedMs);
-                _sendStatisticValue("timeOnLoadStartMs", spentUntilLoadStartedMs);
+                _sendStatisticValue(isRemote ? "timeOnLoadStartRemoteMs" : "timeOnLoadStartMs", spentUntilLoadStartedMs);
             }
             @Override
             public void onLoadEnd(CefBrowser browser, CefFrame cefFrame, int i) {
                 final long spentUntilLoadEndMs = (System.nanoTime() - timeAfterInitNs)/1000000l;
                 onLoadEndLatch.countDown();
                 CefLog.Info("Until onLoadEnd spent %d ms", spentUntilLoadEndMs);
-                _sendStatisticValue("timeOnLoadEndMs", spentUntilLoadEndMs);
+                _sendStatisticValue(isRemote ? "timeOnLoadEndRemoteMs" : "timeOnLoadEndMs", spentUntilLoadEndMs);
             }
             @Override
             public void onLoadError(CefBrowser browser, CefFrame cefFrame, ErrorCode errorCode, String errorText, String failedUrl) {
