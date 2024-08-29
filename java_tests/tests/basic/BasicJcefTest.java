@@ -295,7 +295,8 @@ public class BasicJcefTest {
                     frame[0].setVisible(true);
                     CefLog.Info("Test UI initialized");
                 });
-            }
+            } else
+                browser.createImmediately();
 
             //
             // 4. Perform checks: onAfterCreated -> onLoadStart,onLoadEnd -> CefLifeSpanHandler.onBeforeClosed -> clientDispose_
