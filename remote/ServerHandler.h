@@ -38,6 +38,7 @@ class ServerHandler : public thrift_codegen::ServerIf {
   void Browser_Reload(const int32_t bid) override;
   void Browser_ReloadIgnoreCache(const int32_t bid) override;
   void Browser_LoadURL(const int32_t bid, const std::string& url) override;
+  void Browser_LoadRequest(const int32_t bid, const thrift_codegen::RObject & request) override;
   void Browser_GetURL(std::string& _return, const int32_t bid) override;
   void Browser_ExecuteJavaScript(const int32_t bid,const std::string& code,const std::string& url,const int32_t line) override;
   void Browser_WasResized(const int32_t bid) override;
@@ -52,6 +53,12 @@ class ServerHandler : public thrift_codegen::ServerIf {
   void Browser_GoForward(const int32_t bid) override;
   bool Browser_IsLoading(const int32_t bid) override;
   void Browser_StopLoad(const int32_t bid) override;
+  void Browser_GetMainFrame(thrift_codegen::RObject& _return, const int32_t bid) override;
+  void Browser_GetFocusedFrame(thrift_codegen::RObject& _return, const int32_t bid) override;
+  void Browser_GetFrameByIdentifier(thrift_codegen::RObject& _return, const int32_t bid, const std::string& id) override;
+  void Browser_GetFrameByName(thrift_codegen::RObject& _return, const int32_t bid, const std::string& name) override;
+  void Browser_GetFrameIdentifiers(std::vector<std::string>& _return, const int32_t bid) override;
+  void Browser_GetFrameNames(std::vector<std::string>& _return, const int32_t bid) override;
   int32_t Browser_GetFrameCount(const int32_t bid) override;
   bool Browser_IsPopup(const int32_t bid) override;
   bool Browser_HasDocument(const int32_t bid) override;
@@ -71,10 +78,21 @@ class ServerHandler : public thrift_codegen::ServerIf {
   // CefFrame
   //
   void Frame_ExecuteJavaScript(const int32_t frameId, const std::string& code, const std::string& url, const int32_t line) override;
+  void Frame_Dispose(const int32_t frameId) override;
+  void Frame_GetParent(thrift_codegen::RObject & _return, int frameId) override;
+  void Frame_Undo(int frameId) override;
+  void Frame_Redo(int frameId) override;
+  void Frame_Cut(int frameId) override;
+  void Frame_Copy(int frameId) override;
+  void Frame_Paste(int frameId) override;
+  void Frame_Delete(int frameId) override;
+  void Frame_SelectAll(int frameId) override;
 
   //
   // CefRequest
   //
+  void Request_Create(thrift_codegen::RObject& result) override;
+  void Request_Dispose(int requestId) override;
   void Request_Update(const thrift_codegen::RObject & request) override;
   void Request_GetHeaderByName(std::string& _return,const thrift_codegen::RObject& request,const std::string& name) override;
   void Request_SetHeaderByName(const thrift_codegen::RObject& request,const std::string& name,const std::string& value,const bool overwrite) override;

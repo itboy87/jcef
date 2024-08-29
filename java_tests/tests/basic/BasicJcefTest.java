@@ -284,52 +284,54 @@ public class BasicJcefTest {
         // 3. init UI
         //
         JFrame[] frame = new JFrame[1];
-        if (!BASIC_CHECK_WITHOUT_UI && !GraphicsEnvironment.isHeadless()) {
-            EventQueue.invokeLater(() -> {
-                CefLog.Info("Start test UI initialization");
-                frame[0] = new JFrame("JCEF basic test");
-                frame[0].add(browser.getUIComponent());
-                frame[0].setSize(640, 480);
-                frame[0].setLocationRelativeTo(null);
-                frame[0].setVisible(true);
-                CefLog.Info("Test UI initialized");
-            });
-        }
-
-        //
-        // 4. Perform checks: onAfterCreated -> onLoadStart,onLoadEnd -> CefLifeSpanHandler.onBeforeClosed -> clientDispose_
-        //
-        _wait(onAfterCreated_, 5, "Native CefBrowser wasn't created");
-        CefLog.Info("Native browser creation spent %d ms", onAfterCreatedTime[0] - time1);
         try {
-            _wait(onLoadStart_, 5, "onLoadStart wasn't called, [native] id="+browser.getIdentifier());
-        } catch (RuntimeException e) {
-            if (onLoadErr_.getCount() <= 0) {
-                // empiric observation: onLoadStart can be skipped when onLoadError occured.
-                // see https://youtrack.jetbrains.com/issue/JBR-5192/Improve-JCEF-junit-tests#focus=Comments-27-6799179.0-0
-                CefLog.Info("onLoadStart wasn't called and onLoadError was observed");
-            } else throw e;
-        }
-        _wait(onLoadEnd_, 10, "onLoadEnd wasn't called");
+            if (!BASIC_CHECK_WITHOUT_UI && !GraphicsEnvironment.isHeadless()) {
+                EventQueue.invokeLater(() -> {
+                    CefLog.Info("Start test UI initialization");
+                    frame[0] = new JFrame("JCEF basic test");
+                    frame[0].add(browser.getUIComponent());
+                    frame[0].setSize(640, 480);
+                    frame[0].setLocationRelativeTo(null);
+                    frame[0].setVisible(true);
+                    CefLog.Info("Test UI initialized");
+                });
+            }
 
-        // dispose browser and client
-        browser.setCloseAllowed(); // Cause browser.doClose() to return false so that OSR browser can close.
-        browser.close(true);
-        _wait(onBeforeClose_, 5, "onBeforeClose wasn't called");
-        client.dispose();
-        _wait(clientDispose_, 5, "CefClient wasn't completely disposed: " + client.getInfo());
+            //
+            // 4. Perform checks: onAfterCreated -> onLoadStart,onLoadEnd -> CefLifeSpanHandler.onBeforeClosed -> clientDispose_
+            //
+            _wait(onAfterCreated_, 5, "Native CefBrowser wasn't created");
+            CefLog.Info("Native browser creation spent %d ms", onAfterCreatedTime[0] - time1);
+            try {
+                _wait(onLoadStart_, 5, "onLoadStart wasn't called, [native] id="+browser.getIdentifier());
+            } catch (RuntimeException e) {
+                if (onLoadErr_.getCount() <= 0) {
+                    // empiric observation: onLoadStart can be skipped when onLoadError occured.
+                    // see https://youtrack.jetbrains.com/issue/JBR-5192/Improve-JCEF-junit-tests#focus=Comments-27-6799179.0-0
+                    CefLog.Info("onLoadStart wasn't called and onLoadError was observed");
+                } else throw e;
+            }
+            _wait(onLoadEnd_, 10, "onLoadEnd wasn't called");
 
-        if (frame[0] != null)
-            frame[0].dispose();
+            // dispose browser and client
+            browser.setCloseAllowed(); // Cause browser.doClose() to return false so that OSR browser can close.
+            browser.close(true);
+            _wait(onBeforeClose_, 5, "onBeforeClose wasn't called");
+            client.dispose();
+            _wait(clientDispose_, 5, "CefClient wasn't completely disposed: " + client.getInfo());
+        } finally {
+            if (frame[0] != null)
+                frame[0].dispose();
 
-        // dispose CefApp
-        TestSetupExtension.shutdonwCef();
+            // dispose CefApp
+            TestSetupExtension.shutdonwCef();
 
-        if (CefApp.isRemoteEnabled()) {
-            // Ensure that server process is stopped
-            boolean stopped = NativeServerManager.waitForStopped(WAIT_TIMEOUT_MS);
-            if (!stopped)
-                CefLog.Error("Can't stop server in %d ms.", WAIT_TIMEOUT_MS);
+            if (CefApp.isRemoteEnabled()) {
+                // Ensure that server process is stopped
+                boolean stopped = NativeServerManager.waitForStopped(WAIT_TIMEOUT_MS);
+                if (!stopped)
+                    CefLog.Error("Can't stop server in %d ms.", WAIT_TIMEOUT_MS);
+            }
         }
 
         CefLog.Info("Basic checks spent %d ms", System.currentTimeMillis() - time0);

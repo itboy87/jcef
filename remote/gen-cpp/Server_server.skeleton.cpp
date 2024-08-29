@@ -85,6 +85,11 @@ class ServerHandler : virtual public ServerIf {
     printf("Browser_LoadURL\n");
   }
 
+  void Browser_LoadRequest(const int32_t bid, const  ::thrift_codegen::RObject& request) {
+    // Your implementation goes here
+    printf("Browser_LoadRequest\n");
+  }
+
   void Browser_GetURL(std::string& _return, const int32_t bid) {
     // Your implementation goes here
     printf("Browser_GetURL\n");
@@ -150,9 +155,39 @@ class ServerHandler : virtual public ServerIf {
     printf("Browser_StopLoad\n");
   }
 
+  void Browser_GetMainFrame( ::thrift_codegen::RObject& _return, const int32_t bid) {
+    // Your implementation goes here
+    printf("Browser_GetMainFrame\n");
+  }
+
+  void Browser_GetFocusedFrame( ::thrift_codegen::RObject& _return, const int32_t bid) {
+    // Your implementation goes here
+    printf("Browser_GetFocusedFrame\n");
+  }
+
+  void Browser_GetFrameByIdentifier( ::thrift_codegen::RObject& _return, const int32_t bid, const std::string& identifier) {
+    // Your implementation goes here
+    printf("Browser_GetFrameByIdentifier\n");
+  }
+
+  void Browser_GetFrameByName( ::thrift_codegen::RObject& _return, const int32_t bid, const std::string& name) {
+    // Your implementation goes here
+    printf("Browser_GetFrameByName\n");
+  }
+
   int32_t Browser_GetFrameCount(const int32_t bid) {
     // Your implementation goes here
     printf("Browser_GetFrameCount\n");
+  }
+
+  void Browser_GetFrameIdentifiers(std::vector<std::string> & _return, const int32_t bid) {
+    // Your implementation goes here
+    printf("Browser_GetFrameIdentifiers\n");
+  }
+
+  void Browser_GetFrameNames(std::vector<std::string> & _return, const int32_t bid) {
+    // Your implementation goes here
+    printf("Browser_GetFrameNames\n");
   }
 
   bool Browser_IsPopup(const int32_t bid) {
@@ -223,6 +258,61 @@ class ServerHandler : virtual public ServerIf {
   void Frame_ExecuteJavaScript(const int32_t frameId, const std::string& code, const std::string& url, const int32_t line) {
     // Your implementation goes here
     printf("Frame_ExecuteJavaScript\n");
+  }
+
+  void Frame_Dispose(const int32_t frameId) {
+    // Your implementation goes here
+    printf("Frame_Dispose\n");
+  }
+
+  void Frame_GetParent( ::thrift_codegen::RObject& _return, const int32_t frameId) {
+    // Your implementation goes here
+    printf("Frame_GetParent\n");
+  }
+
+  void Frame_Undo(const int32_t frameId) {
+    // Your implementation goes here
+    printf("Frame_Undo\n");
+  }
+
+  void Frame_Redo(const int32_t frameId) {
+    // Your implementation goes here
+    printf("Frame_Redo\n");
+  }
+
+  void Frame_Cut(const int32_t frameId) {
+    // Your implementation goes here
+    printf("Frame_Cut\n");
+  }
+
+  void Frame_Copy(const int32_t frameId) {
+    // Your implementation goes here
+    printf("Frame_Copy\n");
+  }
+
+  void Frame_Paste(const int32_t frameId) {
+    // Your implementation goes here
+    printf("Frame_Paste\n");
+  }
+
+  void Frame_Delete(const int32_t frameId) {
+    // Your implementation goes here
+    printf("Frame_Delete\n");
+  }
+
+  void Frame_SelectAll(const int32_t frameId) {
+    // Your implementation goes here
+    printf("Frame_SelectAll\n");
+  }
+
+  void Request_Create( ::thrift_codegen::RObject& _return) {
+    // Your implementation goes here
+    printf("Request_Create\n");
+  }
+
+  void Request_Dispose(const int32_t requestId) {
+    // Your implementation goes here
+    printf("Request_Dispose\n");
   }
 
   void Request_Update(const  ::thrift_codegen::RObject& request) {

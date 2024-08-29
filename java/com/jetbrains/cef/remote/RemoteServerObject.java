@@ -11,7 +11,7 @@ import com.jetbrains.cef.remote.thrift_codegen.RObject;
 // Also the server object can be disposed manually (via disposeOnServer). After that
 // moment all requests from java to native will return errors (or default values).
 public abstract class RemoteServerObject extends RemoteServerObjectLocal {
-    private Object myDisposeMutex = new Object();
+    private final Object myDisposeMutex = new Object();
     private boolean myIsDisposed = false;
 
     public RemoteServerObject(RpcExecutor server, RObject robj) {

@@ -19,7 +19,12 @@ using namespace boost::interprocess;
 #define LNDCT()
 #endif
 
-RemoteRenderHandler::RemoteRenderHandler(int bid, std::shared_ptr<RpcExecutor> service) : myBid(bid), myService(service), myBufferManager(bid) {}
+RemoteRenderHandler::RemoteRenderHandler(int bid,
+                                         std::shared_ptr<RpcExecutor> service)
+    : myBid(bid),
+      myService(service),
+      myBufferManagerPage(bid, "page"),
+      myBufferManagerPopup(bid, "popup") {}
 
 bool RemoteRenderHandler::GetRootScreenRect(CefRefPtr<CefBrowser> browser,
                                       CefRect& rect) {
@@ -130,20 +135,28 @@ bool RemoteRenderHandler::GetScreenPoint(CefRefPtr<CefBrowser> browser,
 }
 
 void RemoteRenderHandler::OnPopupShow(CefRefPtr<CefBrowser> browser, bool show) {
-    LNDCT();
-    Log::error("Unimplemented.");
+  LNDCT();
+  myService->exec([&](const RpcExecutor::Service& s){
+    s->OnPopupShow(myBid, show);
+  });
 }
 
 void RemoteRenderHandler::OnPopupSize(CefRefPtr<CefBrowser> browser,
-                                const CefRect& rect) {
-    LNDCT();
-    Log::error("Unimplemented.");
+                                      const CefRect& rect) {
+  LNDCT();
+  myService->exec([&](const RpcExecutor::Service& s) {
+    Rect size;
+    size.x = rect.x;
+    size.y = rect.y;
+    size.w = rect.width;
+    size.h = rect.height;
+    s->OnPopupSize(myBid, size);
+  });
 }
 
 //
 // Debug methods
 //
-#define DRAW_DEBUG 0
 
 inline void fillRect(unsigned char * dst, int stride, int y, int x, int dx, int dy, int r, int g, int b, int a, int width, int height) {
     if (y >= height)
@@ -243,15 +256,21 @@ void RemoteRenderHandler::OnPaint(CefRefPtr<CefBrowser> browser,
                             const void* buffer,
                             int width,
                             int height) {
-    const int rasterPixCount = width*height;
-    const size_t extendedRectsCount = dirtyRects.size() < 10 ? 10 : dirtyRects.size();
-    SharedBuffer & buff = myBufferManager.getLockedBuffer(rasterPixCount*4 + 4*4*extendedRectsCount);
-    if (buff.ptr() == nullptr) {
-      Log::error("SharedBuffer is empty.");
-      return;
-    }
+  const int rasterPixCount = width * height;
+  const size_t extendedRectsCount =
+      dirtyRects.size() < 10 ? 10 : dirtyRects.size();
+  SharedBufferManager& bufferManager =
+      type == PET_POPUP ? myBufferManagerPopup : myBufferManagerPage;
 
-    ::memcpy((char*)buff.ptr(), (char*)buffer, rasterPixCount*4);
+  SharedBuffer& buff = bufferManager.getLockedBuffer(
+      rasterPixCount * 4 + 4 * 4 * extendedRectsCount);
+
+  if (buff.ptr() == nullptr) {
+    Log::error("SharedBuffer is empty.");
+    return;
+  }
+
+  ::memcpy((char*)buff.ptr(), (char*)buffer, rasterPixCount*4);
 
     int32_t * sharedRects = (int32_t *)buff.ptr() + rasterPixCount;
     for (const CefRect& r : dirtyRects) {
@@ -261,14 +280,23 @@ void RemoteRenderHandler::OnPaint(CefRefPtr<CefBrowser> browser,
       *(sharedRects++) = r.height;
     }
 
-#ifdef DRAW_DEBUG
-    const int stride = width*4;
-    const int th = 30;
-    fillRect((unsigned char *)buff.ptr(), stride, 0, 0, th, th, 255, 0, 0, 255, width, height);
-    fillRect((unsigned char *)buff.ptr(), stride, 0, width - th, th, th, 0, 255, 0, 255, width, height);
-    fillRect((unsigned char *)buff.ptr(), stride, height - th, width - th, th, th, 0, 0, 255, 255, width, height);
-    fillRect((unsigned char *)buff.ptr(), stride, height - th, 0, th, th, 255, 0, 255, 255, width, height);
-#endif //DRAW_DEBUG
+    { // Draw debug
+      static int drawDebug = -1;
+        if (drawDebug < 0) {
+          drawDebug = 0;
+          const char* sval = getenv("CEF_SERVER_DRAW_DEBUG");
+          if (sval != nullptr && std::string(sval).compare("true") == 0)
+            drawDebug = 1;
+        }
+        if (drawDebug > 0) {
+          const int stride = width*4;
+          const int th = 30;
+          fillRect((unsigned char *)buff.ptr(), stride, 0, 0, th, th, 255, 0, 0, 255, width, height);
+          fillRect((unsigned char *)buff.ptr(), stride, 0, width - th, th, th, 0, 255, 0, 255, width, height);
+          fillRect((unsigned char *)buff.ptr(), stride, height - th, width - th, th, th, 0, 0, 255, 255, width, height);
+          fillRect((unsigned char *)buff.ptr(), stride, height - th, 0, th, th, 255, 0, 255, 255, width, height);
+        }
+    }
 
     buff.unlock();
 

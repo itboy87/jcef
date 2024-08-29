@@ -607,6 +607,7 @@ public class CefApp extends CefAppHandlerAdapter {
         if (OS.isMacintosh() && args.length == 0) {
             // this condition is to be removed after adapting IJ
             startupAsync(JCefAppConfig.getJbrFrameworkPathOSX());
+            return true;
         }
 
         String frameworkPathOSX = null;
