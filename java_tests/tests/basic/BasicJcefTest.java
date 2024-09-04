@@ -19,6 +19,7 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import tests.CefInitHelper;
 import tests.OsrSupport;
 import tests.junittests.LoggingLifeSpanHandler;
 import tests.junittests.LoggingLoadHandler;
@@ -200,7 +201,7 @@ public class BasicJcefTest {
             return;
 
         final long start = System.currentTimeMillis();
-        TestSetupExtension.initializeCef();
+        CefInitHelper.initializeCef();
 
         //
         // 0. Wait CefApp intialization
@@ -325,7 +326,7 @@ public class BasicJcefTest {
                 frame[0].dispose();
 
             // dispose CefApp
-            TestSetupExtension.shutdonwCef();
+            CefInitHelper.shutdonwCef();
 
             if (CefApp.isRemoteEnabled()) {
                 // Ensure that server process is stopped

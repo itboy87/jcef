@@ -8,10 +8,10 @@ import org.cef.browser.CefBrowser;
 import org.cef.browser.CefFrame;
 import org.cef.misc.CefLog;
 import org.cef.network.CefRequest;
+import tests.CefInitHelper;
 import tests.OsrSupport;
 import tests.junittests.LoggingLifeSpanHandler;
 import tests.junittests.LoggingLoadHandler;
-import tests.junittests.TestSetupExtension;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -22,7 +22,7 @@ public class Basic {
     //
     public static void main(String[] args) {
         final long timeStartNs = System.nanoTime();
-        TestSetupExtension.initializeCef();
+        CefInitHelper.initializeCef();
         final boolean isRemote = CefApp.isRemoteEnabled();
 
         CountDownLatch appInitializationLatch = new CountDownLatch(1);
@@ -104,7 +104,7 @@ public class Basic {
             client.dispose();
 
             // dispose CefApp
-            TestSetupExtension.shutdonwCef();
+            CefInitHelper.shutdonwCef();
             if (CefApp.isRemoteEnabled()) {
                 // Ensure that server process is stopped
                 boolean stopped = NativeServerManager.waitForStopped(1000);
