@@ -2,8 +2,8 @@ package tests.basic;
 
 import com.jetbrains.cef.JCefAppConfig;
 import com.jetbrains.cef.remote.*;
-import org.apache.thrift.server.TServer;
-import org.apache.thrift.transport.TTransportException;
+import com.jetbrains.cef.remote.thrift.server.TServer;
+import com.jetbrains.cef.remote.thrift.transport.TTransportException;
 import org.cef.CefApp;
 import org.cef.CefClient;
 import org.cef.CefSettings;
@@ -19,6 +19,7 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import tests.CefInitHelper;
 import tests.OsrSupport;
 import tests.junittests.LoggingLifeSpanHandler;
 import tests.junittests.LoggingLoadHandler;
@@ -200,7 +201,7 @@ public class BasicJcefTest {
             return;
 
         final long start = System.currentTimeMillis();
-        TestSetupExtension.initializeCef();
+        CefInitHelper.initializeCef();
 
         //
         // 0. Wait CefApp intialization
@@ -295,7 +296,8 @@ public class BasicJcefTest {
                     frame[0].setVisible(true);
                     CefLog.Info("Test UI initialized");
                 });
-            }
+            } else
+                browser.createImmediately();
 
             //
             // 4. Perform checks: onAfterCreated -> onLoadStart,onLoadEnd -> CefLifeSpanHandler.onBeforeClosed -> clientDispose_
@@ -324,7 +326,7 @@ public class BasicJcefTest {
                 frame[0].dispose();
 
             // dispose CefApp
-            TestSetupExtension.shutdonwCef();
+            CefInitHelper.shutdonwCef();
 
             if (CefApp.isRemoteEnabled()) {
                 // Ensure that server process is stopped
